@@ -1,0 +1,117 @@
+/// SPDX-License-Identifier: MIT
+
+pragma solidity >0.5.0 <0.9.0;
+
+import './LibSet.<%= KEY %>.sol';
+
+
+library <%= LibMap2_ %><%= KEY %>_<%  include('VALUE1') %>_<%  include('VALUE2) %>
+{
+	using LibSet_<%= KEY %> for LibSet_<%= KEY %>.set;
+
+	struct map
+	<% {
+		LibSet_<%= KEY %>.set keyset;
+		mapping(<%= KEY %> => <VALUE1>) values1;
+		mapping(<%= KEY %> => <%  include('VALUE2) %>) values2;
+  <% }) -%>
+
+	function length(map storage _map)
+	internal view returns (uint256)
+	<% {
+		return _map.keyset.length();
+  <% }) -%>
+
+	function tryGet1(map storage _map, <%= KEY %> <KEY_LOCATION> _key)
+	internal view returns (bool, <VALUE1> <VALUE1_LOCATION>)
+	<% {
+		return (contains(_map, _key), _map.values1[_key]);
+  <% }) -%>
+
+	function tryGet2(map storage _map, <%= KEY %> <KEY_LOCATION> _key)
+	internal view returns (bool, <%  include('VALUE2) %> <VALUE2_LOCATION>)
+	<% {
+		return (contains(_map, _key), _map.values2[_key]);
+  <% }) -%>
+
+	function get1(map storage _map, <%= KEY %> <KEY_LOCATION> _key)
+	internal view returns (<VALUE1> <VALUE1_LOCATION>)
+	<% {
+		require(contains(_map, _key), "LibMap2_<%= KEY %>_<VALUE1>_<%  include('VALUE2) %>: key not found");
+		return _map.values1[_key];
+  <% }) -%>
+
+	function get2(map storage _map, <%= KEY %> <KEY_LOCATION> _key)
+	internal view returns (<%  include('VALUE2) %> <VALUE2_LOCATION>)
+	<% {
+		require(contains(_map, _key), "LibMap2_<%= KEY %>_<VALUE1>_<%  include('VALUE2) %>: key not found");
+		return _map.values2[_key];
+  <% }) -%>
+
+	function keyAt(map storage _map, uint256 _index)
+	internal view returns (<%= KEY %> <KEY_LOCATION>)
+	<% {
+		return _map.keyset.at(_index);
+  <% }) -%>
+
+	function at(map storage _map, uint256 _index)
+	internal view returns (<%= KEY %> <KEY_LOCATION>, <VALUE1> <VALUE1_LOCATION>, <%  include('VALUE2) %> <VALUE2_LOCATION>)
+	<% {
+		<%= KEY %> <KEY_LOCATION> key = keyAt(_map, _index);
+		return (key, _map.values1[key], _map.values2[key]);
+  <% }) -%>
+
+	function indexOf(map storage _map, <%= KEY %> <KEY_LOCATION> _key)
+	internal view returns (uint256)
+	<% {
+		return _map.keyset.indexOf(_key);
+  <% }) -%>
+
+	function contains(map storage _map, <%= KEY %> <KEY_LOCATION> _key)
+	internal view returns (bool)
+	<% {
+		return _map.keyset.contains(_key);
+  <% }) -%>
+
+	function keys(map storage _map)
+	internal view returns (<%= KEY %>[] memory)
+	<% {
+		return _map.keyset.content();
+  <% }) -%>
+
+	function set(
+		map storage _map,
+		<%= KEY %> <KEY_LOCATION> _key,
+		<VALUE1> <VALUE1_LOCATION> _value1,
+		<%  include('VALUE2) %> <VALUE2_LOCATION> _value2)
+	internal returns (bool)
+	<% {
+		_map.keyset.add(_key);
+		_map.values1[_key] = _value1;
+		_map.values2[_key] = _value2;
+		return true;
+  <% }) -%>
+
+	function del(map storage _map, <%= KEY %> <KEY_LOCATION> _key)
+	internal returns (bool)
+	<% {
+		_map.keyset.remove(_key);
+		delete _map.values1[_key];
+		delete _map.values2[_key];
+		return true;
+  <% }) -%>
+
+	function clear(map storage _map)
+	internal returns (bool)
+	<% {
+		for (uint256 i = _map.keyset.length(); i > 0; --i)
+		<% {
+			<%= KEY %> <KEY_LOCATION> key = keyAt(_map, i);
+			delete _map.values1[key];
+			delete _map.values2[key];
+	  <% }) -%>
+		_map.keyset.clear();
+		return true;
+  <% }) -%>
+  
+}
