@@ -1,0 +1,3 @@
+[submodule "http-rpc"]
+	path = http-rpc
+	url = https://github.com/sambacha/http-rpc
