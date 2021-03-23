@@ -1,8 +1,15 @@
 {
-  "name": "ejs-provider",
-  "version": "1.0.0",
-  "description": "",
-  "files": ["*.ejs","*.js"],
+  "name": "bcall-factory",
+  "version": "0.0.0",
+  "description": "batch call factory",
+  "main": "index.js",
+  "bin": {
+    "bcall": "src/index.js"
+  },
+  "files": [
+    "*.ejs",
+    "*.js"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -12,9 +19,32 @@
   },
   "keywords": [],
   "author": "sam",
-  "license": "ISC",
+  "license": "GPL-2.0",
   "bugs": {
     "url": "https://github.com/manifoldfinance/bcall-factory/issues"
   },
-  "homepage": "https://github.com/manifoldfinance/bcall-factory#readme"
+  "homepage": "https://github.com/manifoldfinance/bcall-factory#readme",
+  "devDependencies": {
+    "@types/ejs": "^3.0.6",
+    "@types/node": "^14.14.35",
+    "ejs": "^3.0.1",
+    "ejs-lint": "^1.1.0",
+    "ejs-plus": "^0.0.4",
+    "typescript": "^3.1.3"
+  },
+  "dependencies": {
+    "@ethersproject/abi": "^5.0.9",
+    "@ethersproject/abstract-signer": "^5.0.9",
+    "@ethersproject/address": "^5.0.8",
+    "@ethersproject/bignumber": "^5.0.12",
+    "@ethersproject/contracts": "^5.0.8",
+    "@ethersproject/hardware-wallets": "^5.0.11",
+    "@ethersproject/hash": "^5.0.9",
+    "@ethersproject/hdnode": "^5.0.7",
+    "@ethersproject/providers": "^5.0.17",
+    "@ethersproject/wallet": "^5.0.9",
+    "is-url": "^1.2.4",
+    "prompts": "^2.4.0",
+    "yargs": "^15.4.1"
+  }
 }

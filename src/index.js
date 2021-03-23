@@ -1,4 +1,4 @@
- #!/usr/bin/env node
+#!/usr/bin/env node
 
 'use strict';
 
@@ -23,35 +23,25 @@ const formatResult                            = require('./utils/formatResult.js
 	const argv = yargs.option('address', { string: true }).argv;
 	prompts.override(argv);
 
-/**
-*
-*  @const {artifact} 
-*  @param {abiArtifact}  
-*  @summary select abi function 
-*
-*/
-
-	const { artifact } = await prompts({
+	/****************************************************************************
+	 *                              Load Artefact                               *
+	 ****************************************************************************/
+	const { artefact } = await prompts({
 		type: 'text',
-		name: 'artifact',
-		message: 'Path to artifact',
+		name: 'artefact',
+		message: 'Path to artefact',
 		validate: fs.existsSync,
 		format: path => JSON.parse(fs.readFileSync(path)),
 		initial: 'example/TimelockController.json',
 	});
-	if (artifact == undefined) { throw 'Aborted'; }
-	if (!artifact.abi) { throw 'Invalid artifact'; }
+	if (artefact == undefined) { throw 'Aborted'; }
+	if (!artefact.abi) { throw 'Invalid artefact'; }
 
-	const abi = new Interface(artifact.abi);
+	const abi = new Interface(artefact.abi);
 
-/**
-*
-*  @const {function} 
-*  @param {select}  
-*  @summary select abi function 
-*
-*/
-
+	/****************************************************************************
+	 *                             Select function                              *
+	 ****************************************************************************/
 	const { selector } = await prompts({
 		type: 'select',
 		name: 'selector',
@@ -63,14 +53,10 @@ const formatResult                            = require('./utils/formatResult.js
 	const fragment = abi.functions[selector];
 	const readonly = [ 'view', 'pure' ].includes(fragment.stateMutability);
 	const params   = argv.args && JSON.parse(argv.args) || await getFunctionArgs(fragment);
-/**
-*
-*  @const {execute} 
-*  @param {choices}  boolean
-*  @summary select operation 
-*
-*/
 
+	/****************************************************************************
+	 *                             Select operation                             *
+	 ****************************************************************************/
 	const { execute } = await prompts({
 		type: 'select',
 		name: 'execute',
@@ -88,14 +74,10 @@ const formatResult                            = require('./utils/formatResult.js
 		console.log('Encoded function call:', data)
 		return
 	}
-/**
-*
-*  @const {provider} 
-*  @param {chainId} 
-*  @summary select provider 
-*
-*/
 
+	/****************************************************************************
+	 *                             Select provider                              *
+	 ****************************************************************************/
 	const { provider } = await prompts([{
 		type: 'select',
 		name: 'provider',
@@ -120,16 +102,11 @@ const formatResult                            = require('./utils/formatResult.js
 	}]);
 	if (provider == undefined) { throw 'Aborted'; }
 
-/**
-*
-*  @const {address} 
-*  @param {chainId} 
-*  @summary select address
-*
-*/
-
+	/****************************************************************************
+	 *                              Select address                              *
+	 ****************************************************************************/
 	const { chainId } = await provider.getNetwork()
-	const { address: defaultAddress } = (artifact.networks && artifact.networks[chainId] || {});
+	const { address: defaultAddress } = (artefact.networks && artefact.networks[chainId] || {});
 	const { address } = await prompts([{
 		type: defaultAddress && 'select',
 		name: 'address',
@@ -149,13 +126,9 @@ const formatResult                            = require('./utils/formatResult.js
 
 	const contract = new Contract(address, abi, provider);
 
-/**
-*
-*  @const {signer} 
-*  @summary select signer
-*
-*/
-
+	/****************************************************************************
+	 *                              Select signer                               *
+	 ****************************************************************************/
 	const { signer } = await prompts([{
 		type: !readonly && 'select',
 		name: 'signer',
@@ -200,13 +173,9 @@ const formatResult                            = require('./utils/formatResult.js
 	}]);
 	if (!readonly && !signer instanceof Signer) { throw 'Aborted'; }
 
-
-/**
-*
-*  @exports {confirm} 
-*
-*/
-
+	/****************************************************************************
+	 *                                 Execute                                  *
+	 ****************************************************************************/
 	const { confirm } = await prompts({
 		type: !readonly && 'confirm',
 		name: 'confirm',
